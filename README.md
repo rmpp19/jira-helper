@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a Next.js 14 (App Router) Jira helper app that exposes a small UI and backend for calling Jira Cloud and returning JSON you can copy or download.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- Home dashboard listing available functions.
+- Get ticket information by key (e.g. `PROJ-123`).
+- Get all tickets in a specified sprint with their comments.
+- JSON results viewer with copy-to-clipboard and `.json` download.
+
+## Prerequisites
+
+- Node.js 18 or later.
+- A Jira Cloud site with an API token.
+
+Set the following environment variables in a `.env.local` file at the project root:
+
+```bash
+JIRA_BASE_URL="https://your-domain.atlassian.net"
+JIRA_EMAIL="your-email@example.com"
+JIRA_API_TOKEN="your-api-token-here"
+```
+
+## Running the app
+
+Install dependencies (already done if you just scaffolded the project):
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Using the tools
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- On the home page, choose **Get ticket information** or **Get sprint tickets with comments**.
+- Fill in the required input (issue key or sprint ID) and click **Run**.
+- View the JSON in the result pane, then use **Copy JSON** or **Download .json** as needed.
 
-## Learn More
+## Linting
 
-To learn more about Next.js, take a look at the following resources:
+To run ESLint checks:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run lint
+```
