@@ -186,7 +186,9 @@ export async function POST(req: NextRequest) {
 
     if (!records.length) {
       return NextResponse.json(
-        { error: "CSV file contained no data rows." },
+        {
+          error: "Failed to parse CSV file: no data rows found.",
+        },
         { status: 400 },
       );
     }
@@ -205,20 +207,28 @@ export async function POST(req: NextRequest) {
       const rowIndex = index + 1; // 1-based index (excluding header)
 
       const projectKey = row.project?.trim();
-      const issueType = row.issue_type?.trim() || row.issuetype?.trim();
+      const issueType = (row.issue_type ?? row.issuetype)?.trim();
       const summary = row.summary?.trim();
       const description = row.description?.trim();
       const acceptance = row.acceptancecriteria?.trim();
       const componentName = row.component?.trim();
 
-      if (!projectKey || !summary) {
+      const missingFields: string[] = [];
+      if (!projectKey) missingFields.push("project");
+      if (!issueType) missingFields.push("Issue Type");
+      if (!summary) missingFields.push("summary");
+      if (!description) missingFields.push("description");
+      if (!acceptance) missingFields.push("acceptanceCriteria");
+      if (!componentName) missingFields.push("component");
+
+      if (missingFields.length > 0) {
         results.push({
           rowIndex,
           projectKey,
           issueType,
           summary,
           success: false,
-          error: "Missing required fields: project and summary are required.",
+          error: `Missing required fields: ${missingFields.join(", ")}.`,
         });
         continue;
       }
@@ -319,6 +329,9 @@ export async function POST(req: NextRequest) {
         } catch {
           // If we cannot parse JSON, we still treat it as a success but without a key.
         }
+        const browseUrl = createdKey
+          ? `${base}/browse/${encodeURIComponent(createdKey)}`
+          : undefined;
 
         results.push({
           rowIndex,
@@ -328,6 +341,7 @@ export async function POST(req: NextRequest) {
           success: true,
           issueKey: createdKey,
           status: response.status,
+          browseUrl,
         });
       } catch (error) {
         console.error("Unexpected error while calling Jira for bulk-create", {

@@ -5,8 +5,8 @@ import { useState } from "react";
 
 type JiraResponse = unknown;
 
-export default function TicketInfoPage() {
-  const [issueKey, setIssueKey] = useState("");
+export default function CarryOverPage() {
+  const [sprintName, setSprintName] = useState("");
   const [result, setResult] = useState<JiraResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -16,29 +16,20 @@ export default function TicketInfoPage() {
     setError(null);
     setResult(null);
 
-    const trimmedKey = issueKey.trim();
-
-    if (!trimmedKey) {
-      setError("Issue key is required.");
-      return;
-    }
-
-    const jiraKeyPattern = /^[A-Z][A-Z0-9]+-\d+$/i;
-    if (!jiraKeyPattern.test(trimmedKey)) {
-      setError(
-        "Issue key is invalid. Expected a format like DXQ-1234 or CNX-1234.",
-      );
-      return;
-    }
-
     setLoading(true);
     try {
-      const response = await fetch("/api/jira/ticket", {
+      const body: { sprintName?: string } = {};
+      const trimmed = sprintName.trim();
+      if (trimmed) {
+        body.sprintName = trimmed;
+      }
+
+      const response = await fetch("/api/jira/carry-over", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ issueKey: trimmedKey }),
+        body: JSON.stringify(body),
       });
 
       const data = await response.json();
@@ -71,7 +62,9 @@ export default function TicketInfoPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `jira-ticket-${issueKey.trim() || "result"}.json`;
+    link.download = sprintName.trim()
+      ? `jira-carry-over-${sprintName.trim()}.json`
+      : "jira-carry-over-all.json";
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -84,30 +77,39 @@ export default function TicketInfoPage() {
             href="/"
             className="inline-flex items-center rounded-full border border-sky-600 bg-slate-900 px-3 py-1 font-medium text-sky-200 shadow-sm hover:border-sky-400 hover:text-sky-100"
           >
+            
+            
+            
+            
+            
+            
+            
+            
             ← Back to home: Jira Helper
           </Link>
         </div>
 
         <header className="space-y-1 border-b border-slate-800 pb-4">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Get ticket information
+            Carry-over tickets
           </h1>
           <p className="text-sm text-slate-300">
-            Fetch a Jira issue by key (for example, PROJ-123) and view the
-            complete JSON payload.
+            Retrieve tickets that have a carry-over reason or detail. Provide a
+            sprint name to limit results to that sprint, or leave it blank to
+            get carry-over tickets across all sprints.
           </p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="block text-sm font-medium" htmlFor="issueKey">
-              Issue key
+            <label className="block text-sm font-medium" htmlFor="sprintName">
+              Sprint name (optional)
             </label>
             <input
-              id="issueKey"
-              value={issueKey}
-              onChange={(e) => setIssueKey(e.target.value)}
-              placeholder="e.g. PROJ-123"
+              id="sprintName"
+              value={sprintName}
+              onChange={(e) => setSprintName(e.target.value)}
+              placeholder="e.g. Sprint 1"
               className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-50 outline-none ring-sky-500 focus:ring-1"
             />
           </div>
@@ -127,7 +129,7 @@ export default function TicketInfoPage() {
           </div>
         )}
 
-        {result && (
+        {result != null && (
           <section className="space-y-2">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-medium text-slate-200">Result JSON</h2>
@@ -156,7 +158,8 @@ export default function TicketInfoPage() {
 
         <footer className="mt-auto border-t border-slate-800 pt-4 text-xs text-slate-500">
           Jira credentials are read from environment variables on the server
-          (JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN).
+          (JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN, JIRA_CARRYOVER_REASON_FIELD,
+          JIRA_CARRYOVER_DETAIL_FIELD).
         </footer>
       </main>
     </div>
