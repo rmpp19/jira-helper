@@ -28,32 +28,33 @@ type FilterReportApiResult = {
 
 const tools = [
   {
-    name: "Get ticket information",
-    description: "Fetch a single Jira ticket by key and view the raw JSON.",
+    name: "Lookup ticket JSON by key",
+    description:
+      "Fetch a single Jira issue by key and inspect the full Jira JSON payload.",
     href: "/ticket-info",
   },
   {
-    name: "Get sprint tickets with comments",
+    name: "Sprint issues with comments",
     description:
-      "List all tickets in a sprint along with their comments as JSON.",
+      "Retrieve all issues in a sprint with comments in one JSON response.",
     href: "/sprint-comments",
   },
   {
-    name: "Get board tickets",
+    name: "Board issues snapshot",
     description:
-      "List all issues on a Jira board as JSON to review backlog health.",
+      "Fetch all issues for a board ID (including paginated Jira results) as JSON.",
     href: "/board-issues",
   },
   {
-    name: "Future sprints for DX squads",
+    name: "Future-sprint squad worklist",
     description:
-      "Run a predefined JQL to find unresolved future-sprint tickets for specific squads, excluding tickets marked as AI generated.",
+      "Run a predefined query for unresolved future-sprint work in target squads, excluding AI-generated tickets.",
     href: "/future-sprints",
   },
   {
-    name: "Carry-over tickets",
+    name: "Carry-over reason report",
     description:
-      "Find tickets that have a carry-over reason or detail, optionally filtered by sprint.",
+      "Find tickets with carry-over reason/detail, for a specific sprint or across all sprints.",
     href: "/carry-over",
   },
 ];
@@ -329,11 +330,12 @@ export default function Home() {
         <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/60 p-4">
           <header className="space-y-1">
             <h2 className="text-base font-medium text-slate-100">
-              Filter issues by JQL
+              JQL issue metrics report with lead and cycle time
             </h2>
             <p className="text-xs text-slate-300">
-              Run an ad-hoc Jira search using JQL and get a JSON payload with
-              lead time, cycle time, and other metrics for each issue.
+              Run ad-hoc JQL and return issue-level metrics, including Squad,
+              lead/cycle time, reopen count, and assignee changes. Export as
+              JSON or CSV.
             </p>
           </header>
 
@@ -423,12 +425,12 @@ export default function Home() {
         <section className="space-y-4 rounded-xl border border-slate-800 bg-slate-900/60 p-4">
           <header className="space-y-1">
             <h2 className="text-base font-medium text-slate-100">
-              Bulk create tickets from CSV
+              Bulk-create Jira tickets from CSV
             </h2>
             <p className="text-xs text-slate-300">
               Upload a CSV file with columns like project, Issue Type, summary,
-              description, acceptanceCriteria, and component to create multiple
-              Jira issues in one go.
+              description, acceptanceCriteria, and component, then see per-row
+              success/failure results with created issue keys.
             </p>
           </header>
 

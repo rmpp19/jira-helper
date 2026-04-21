@@ -48,10 +48,10 @@ describe("Home page", () => {
   it("renders tool links", () => {
     render(<Home />);
     expect(
-      screen.getByRole("link", { name: /Get ticket information/i }),
+      screen.getByRole("link", { name: /Lookup ticket JSON by key/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /Get sprint tickets with comments/i }),
+      screen.getByRole("link", { name: /Sprint issues with comments/i }),
     ).toBeInTheDocument();
   });
 
