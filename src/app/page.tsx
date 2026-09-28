@@ -9,6 +9,7 @@ type BulkCreateRowResult = {
   summary?: string;
   success: boolean;
   issueKey?: string;
+  browseUrl?: string;
   status?: number;
   error?: string;
 };
@@ -56,6 +57,12 @@ const tools = [
     description:
       "Find tickets with carry-over reason/detail, for a specific sprint or across all sprints.",
     href: "/carry-over",
+  },
+  {
+    name: "Bulk status change",
+    description:
+      "Change status for all issues matched by JQL, with a resolution value in the transition payload.",
+    href: "/status-change",
   },
 ];
 
